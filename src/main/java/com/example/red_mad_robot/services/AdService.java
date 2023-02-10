@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class AdService {
+public class AdService implements Runnable{
     private AdRepository adRepo;
 
     public AdService(AdRepository adRepo) {
@@ -18,12 +18,4 @@ public class AdService {
         return adRepo.save(ad);
     }
 
-    public Ad archiveAd(Long id){
-        Optional<Ad> ad = adRepo.findById(id);
-        if (ad.isEmpty()){
-            throw new AdNotFoundException(id);
-        }
-        Ad adArchived = ad.get().archiveAd();
-        return adRepo.save(adArchived);
-    }
 }

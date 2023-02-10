@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.math.BigDecimal;
 
@@ -29,10 +30,13 @@ public class Ad {
 
     @NotBlank(message = "статус не может быть пустым")
     @Pattern(
-            regexp = "^(active|archived)$",
-            message = "статус может быть только active или archived"
+            regexp = "^(no bids|active|archived)$",
+            message = "статус может быть только no bids, active или archived"
     )
-    private String status = "active";
+    private String status = "no bids";
+
+    @Positive(message = "продолжительность объявления должна быть положительной")
+    private Long adDuration;
 
     @ManyToOne()
     @JoinColumn(name = "user_id")

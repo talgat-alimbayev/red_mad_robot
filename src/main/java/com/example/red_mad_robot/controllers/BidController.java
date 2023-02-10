@@ -19,8 +19,8 @@ public class BidController {
 
     @PostMapping(path = "api/bids/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public Bid placeBid(@RequestBody @Valid Bid bid){
+    public void placeBid(@RequestBody @Valid Bid bid){
         log.info("создана ставка " + bid.toString() + " Начинаем отсчет");
-        return bidService.placeBid(bid);
+        bidService.placeBid(bid);
     }
 }
