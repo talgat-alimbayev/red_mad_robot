@@ -27,5 +27,5 @@ import java.math.BigDecimal;
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String highest = "";
+    private short highest = 0;
 }

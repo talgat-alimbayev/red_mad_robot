@@ -8,8 +8,8 @@ DROP TABLE IF EXISTS ads CASCADE;
 CREATE TABLE IF NOT EXISTS ads (
     id SERIAL NOT NULL PRIMARY KEY,
     description char(50) NOT NULL,
-    startPrice real NOT NULL,
-    imageLink char(50) NOT NULL,
+    start_price real NOT NULL,
+    image_link char(50) NOT NULL,
     status char(8) NOT NULL,
     user_id INT NOT NULL );
 
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS bids (
     ad INT NOT NULL,
     bid real NOT NULL,
     user_id INT NOT NULL,
-    status char(3) NOT NULL );
+    highest INT NOT NULL );
 
 ALTER TABLE bids ADD CONSTRAINT FK_ad FOREIGN KEY (ad) REFERENCES ads(id) ON DELETE CASCADE;
 ALTER TABLE bids ADD CONSTRAINT FK_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;

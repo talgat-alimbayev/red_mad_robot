@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(produces = "api/bids")
+@RequestMapping(produces = "application/json")
 @Slf4j
 public class BidController {
     private BidService bidService;
@@ -17,7 +17,7 @@ public class BidController {
         this.bidService = bidService;
     }
 
-    @PostMapping(path = "create")
+    @PostMapping(path = "api/bids/create")
     @ResponseStatus(HttpStatus.CREATED)
     public Bid placeBid(@RequestBody @Valid Bid bid){
         log.info("создана ставка " + bid.toString() + " Начинаем отсчет");
