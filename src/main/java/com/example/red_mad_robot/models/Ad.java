@@ -46,4 +46,8 @@ public class Ad {
         this.status = "archived";
         return this;
     }
+
+    public Long adDurationSeconds(){
+        return this.adDurationMinutes*60;
+    }
 }

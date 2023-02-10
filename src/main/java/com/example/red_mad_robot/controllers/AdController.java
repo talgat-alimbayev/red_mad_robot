@@ -23,10 +23,20 @@ public class AdController {
         adService.saveAd(ad);
     }
 
-    @PostMapping(path = "api/ads/archive/id")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void archiveAd(@RequestParam Long id){
-        log.info("архивируем объявление " + id.toString());
-        adService.archiveAd(id);
+    @GetMapping(path = "api/ads/active")
+    public Iterable<Ad> findActiveAds(){
+        log.info("поиск активных объявлений");
+        return adService.findActiveAds();
+    }
+
+    @GetMapping(path = "api/ads/no-bids")
+    public Iterable<Ad> findNoBidsAds(){
+        log.info("поиск объявлений без ставок");
+        return adService.findNoBidsAds();
+    }
+    @GetMapping(path = "api/ads/archived")
+    public Iterable<Ad> findArchivedAds(){
+        log.info("поиск объявлений в архиве");
+        return adService.findArchivedAds();
     }
 }

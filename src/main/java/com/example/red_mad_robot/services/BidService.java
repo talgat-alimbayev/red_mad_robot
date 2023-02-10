@@ -10,6 +10,7 @@ import com.example.red_mad_robot.services.exceptions.AdNotFoundException;
 import com.example.red_mad_robot.services.exceptions.ArchivedAdException;
 import com.example.red_mad_robot.services.exceptions.LowBidException;
 import com.example.red_mad_robot.services.exceptions.UserNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -19,6 +20,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class BidService {
     private BidRepository bidRepo;
     private AdRepository adRepo;
@@ -51,23 +53,27 @@ public class BidService {
         Ad ad = ad_opt.get();
         if (ad.getStatus().equals("no bids")){
             adArchiver.setAdToArchive(ad);
-            taskScheduler.schedule(adArchiver, Instant.now().plusSeconds(ad.getAdDurationMinutes()*60));
+            taskScheduler.schedule(adArchiver, Instant.now().plusSeconds(ad.adDurationSeconds()));
             ad.setStatus("active");
             adRepo.save(ad);
 
             bid.setHighest(true);
             bidRepo.save(bid);
+            log.info("Создана ставка " + bid.toString() + ". Начат отсчет");
         } else if (ad.getStatus().equals("archived")) {
             throw new ArchivedAdException(ad.getId());
         }
 
-        Bid highestBid = findTheHighestBid(ad);
-        if (bid.getBid().compareTo(highestBid.getBid()) == 1){
-            highestBid.setHighest(false);
-            bidRepo.save(highestBid);
+        Bid currentHighestBid = findTheHighestBid(ad);
+        if (bid.getBid().compareTo(currentHighestBid.getBid()) == 1){
+            currentHighestBid.setHighest(false);
+            User userToNotify = userRepo.findById(currentHighestBid.getId()).get();
+            log.info("Отправляем уведомление на " + userToNotify.getEmail() + ", что их ставка больше неактуальна");
+            bidRepo.save(currentHighestBid);
 
             bid.setHighest(true);
             bidRepo.save(bid);
+            log.info("Принята новая ставка " + bid.toString());
         }
         else {
             throw new LowBidException();
