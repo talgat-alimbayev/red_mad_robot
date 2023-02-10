@@ -6,13 +6,16 @@ import com.example.red_mad_robot.models.User;
 import com.example.red_mad_robot.repositories.AdRepository;
 import com.example.red_mad_robot.repositories.BidRepository;
 import com.example.red_mad_robot.repositories.UserRepository;
+import com.example.red_mad_robot.services.exceptions.AdNotFoundException;
+import com.example.red_mad_robot.services.exceptions.ArchivedAdException;
+import com.example.red_mad_robot.services.exceptions.LowBidException;
+import com.example.red_mad_robot.services.exceptions.UserNotFoundException;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -34,7 +37,7 @@ public class BidService {
         this.taskScheduler = taskScheduler;
     }
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public Bid placeBid(Bid bid){
+    public void placeBid(Bid bid){
         Optional<User> user_opt = userRepo.findById(bid.getUser().getId());
         if (user_opt.isEmpty()){
             throw new UserNotFoundException(bid.getUser().getId());
@@ -44,12 +47,34 @@ public class BidService {
         if (ad_opt.isEmpty()){
             throw new AdNotFoundException(bid.getAd().getId());
         }
-
+        // if no bids then start the countdown and schedule the ad archiver
         Ad ad = ad_opt.get();
         if (ad.getStatus().equals("no bids")){
             adArchiver.setAdToArchive(ad);
-            taskScheduler.schedule(adArchiver, Instant.now().plusSeconds(ad.getAdDuration()));
+            taskScheduler.schedule(adArchiver, Instant.now().plusSeconds(ad.getAdDurationMinutes()*60));
+            ad.setStatus("active");
+            adRepo.save(ad);
+
+            bid.setHighest(true);
+            bidRepo.save(bid);
+        } else if (ad.getStatus().equals("archived")) {
+            throw new ArchivedAdException(ad.getId());
         }
-        return bidRepo.save(bid);
+
+        Bid highestBid = findTheHighestBid(ad);
+        if (bid.getBid().compareTo(highestBid.getBid()) == 1){
+            highestBid.setHighest(false);
+            bidRepo.save(highestBid);
+
+            bid.setHighest(true);
+            bidRepo.save(bid);
+        }
+        else {
+            throw new LowBidException();
+        }
+    }
+
+    private Bid findTheHighestBid(Ad ad){
+        return bidRepo.findBidsByAdAndHighest(ad.getId());
     }
 }

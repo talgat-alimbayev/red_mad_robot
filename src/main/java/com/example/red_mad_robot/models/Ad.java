@@ -36,7 +36,7 @@ public class Ad {
     private String status = "no bids";
 
     @Positive(message = "продолжительность объявления должна быть положительной")
-    private Long adDuration;
+    private Long adDurationMinutes;
 
     @ManyToOne()
     @JoinColumn(name = "user_id")

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class AdService implements Runnable{
+public class AdService {
     private AdRepository adRepo;
 
     public AdService(AdRepository adRepo) {
@@ -18,4 +18,17 @@ public class AdService implements Runnable{
         return adRepo.save(ad);
     }
 
+    public Iterable<Ad> findAllAds() {
+        return adRepo.findAll();
+    }
+
+    public Iterable<Ad> findActiveAds() {
+        return adRepo.findByStatus("active");
+    }
+    public Iterable<Ad> findNoBidsAds() {
+        return adRepo.findByStatus("no bids");
+    }
+    public Iterable<Ad> findArchivedAds() {
+        return adRepo.findByStatus("archived");
+    }
 }

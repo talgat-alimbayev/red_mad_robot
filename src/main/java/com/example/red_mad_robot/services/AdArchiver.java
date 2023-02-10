@@ -2,6 +2,7 @@ package com.example.red_mad_robot.services;
 
 import com.example.red_mad_robot.models.Ad;
 import com.example.red_mad_robot.repositories.AdRepository;
+import com.example.red_mad_robot.services.exceptions.AdNotFoundException;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
