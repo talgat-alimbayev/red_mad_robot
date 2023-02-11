@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS ads (
     start_price real NOT NULL,
     image_link char(50) NOT NULL,
     status char(8) NOT NULL,
-    ad_duration INT NOT NULL
+    ad_duration_minutes INT NOT NULL,
     user_id INT NOT NULL );
 
 ALTER TABLE ads ADD CONSTRAINT FK_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;

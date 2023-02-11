@@ -2,6 +2,7 @@ package com.example.red_mad_robot.services;
 
 import com.example.red_mad_robot.models.User;
 import com.example.red_mad_robot.repositories.UserRepository;
+import com.example.red_mad_robot.services.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class UserService {
         if (user.isPresent()) {
             return new ResponseEntity<>(user.get(), HttpStatus.OK);
         }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        throw new UserNotFoundException(email);
     }
 
     public ResponseEntity<User> findById(Long id){
@@ -30,7 +31,7 @@ public class UserService {
         if (user.isPresent()) {
             return new ResponseEntity<>(user.get(), HttpStatus.OK);
         }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        throw new UserNotFoundException(id);
     }
 
     public User saveUser(User user){

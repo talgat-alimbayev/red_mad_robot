@@ -1,9 +1,7 @@
 package com.example.red_mad_robot.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +21,7 @@ public class Ad {
     private String description;
 
     @Positive(message = "стартовая цена должна быть больше нуля")
+    @NotNull(message = "стартовая цена не может быть пустой")
     private BigDecimal startPrice;
 
     @NotBlank(message = "нужно добавить ссылку на изображение")
@@ -36,6 +35,7 @@ public class Ad {
     private String status = "no bids";
 
     @Positive(message = "продолжительность объявления должна быть положительной")
+    @NotNull(message = "продолжительность не может быть пустой")
     private Long adDurationMinutes;
 
     @ManyToOne()

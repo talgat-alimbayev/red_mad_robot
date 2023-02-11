@@ -20,22 +20,16 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "api/users/find-by-id")
-    public ResponseEntity<User> findUserById(@RequestParam Long userId){
-        log.info("fetching user by id=" + userId.toString());
-        return userService.findById(userId);
-    }
-
     @GetMapping(path = "api/users/find-by-email")
     public ResponseEntity<User> findUserByUsername(@RequestParam String email){
-        log.info("fetching a user by email=" + email);
+        log.info("ищем пользователя по email=" + email);
         return userService.findByEmail(email);
     }
 
     @PostMapping(path = "api/users/new-user")
     @ResponseStatus(HttpStatus.CREATED)
     public void saveUser(@RequestBody @Valid User user){
-        log.info("saving a new user to the DB: " + user.toString());
+        log.info("сохраняем нового пользователя в БД: " + user.toString());
         userService.saveUser(user);
     }
 }

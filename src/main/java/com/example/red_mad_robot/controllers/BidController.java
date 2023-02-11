@@ -22,4 +22,16 @@ public class BidController {
     public void placeBid(@RequestBody @Valid Bid bid){
         bidService.placeBid(bid);
     }
+
+    @GetMapping(path = "api/bids/all")
+    public Iterable<Bid> findAllBids(){
+        log.info("ищем все ставки");
+        return bidService.findAllBids();
+    }
+
+    @GetMapping(path = "api/bids/by-ad")
+    public Iterable<Bid> findBidsByAd(@RequestParam Long adId){
+        log.info("ищем все ставки по объявлению " + adId.toString());
+        return bidService.findAllBidsByAd(adId);
+    }
 }

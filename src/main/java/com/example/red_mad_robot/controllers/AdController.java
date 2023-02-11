@@ -19,7 +19,6 @@ public class AdController {
     @PostMapping(path = "api/ads/create")
     @ResponseStatus(HttpStatus.CREATED)
     public void createAd(@RequestBody @Valid Ad ad){
-        log.info("сохраняем новое объявление " + ad.toString());
         adService.saveAd(ad);
     }
 
