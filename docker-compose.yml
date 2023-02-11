@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  red_mad_robot:
+    build: .
+    container_name: back
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13.8
+    container_name: postgres
+    environment:
+      POSTGRES_DB: red_mad_robot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: g502
+    ports:
+      - 5432:5432
