@@ -34,4 +34,10 @@ public class BidController {
         log.info("ищем все ставки по объявлению " + adId.toString());
         return bidService.findAllBidsByAd(adId);
     }
+
+    @GetMapping(path = "api/bids/highest-bid/by-ad")
+    public Bid findHighestBidsByAd(@RequestParam Long adId){
+        log.info("ищем наивысшую ставку по объявлению " + adId.toString());
+        return bidService.findTheHighestBid(adId);
+    }
 }

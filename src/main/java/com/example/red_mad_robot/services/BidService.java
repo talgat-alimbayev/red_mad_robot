@@ -6,10 +6,7 @@ import com.example.red_mad_robot.models.User;
 import com.example.red_mad_robot.repositories.AdRepository;
 import com.example.red_mad_robot.repositories.BidRepository;
 import com.example.red_mad_robot.repositories.UserRepository;
-import com.example.red_mad_robot.services.exceptions.AdNotFoundException;
-import com.example.red_mad_robot.services.exceptions.ArchivedAdException;
-import com.example.red_mad_robot.services.exceptions.LowBidException;
-import com.example.red_mad_robot.services.exceptions.UserNotFoundException;
+import com.example.red_mad_robot.services.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -40,7 +37,6 @@ public class BidService {
     }
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void placeBid(Bid bid){
-
         // сначала проверяем на наличие пользователя
         Optional<User> user_opt = userRepo.findById(bid.getUser().getId());
         if (user_opt.isEmpty()){
@@ -57,14 +53,16 @@ public class BidService {
             throw new ArchivedAdException(ad.getId());
         }
 
-
         Optional<Bid> currentHighestBid_opt = findTheHighestBid(ad); // это будет пустое в случае, если это первая ставка
 
         if (currentHighestBid_opt.isPresent() &&
                 bid.getBid().compareTo(currentHighestBid_opt.get().getBid()) == 1){
+
             Bid currentHighestBid = currentHighestBid_opt.get();
             currentHighestBid.setHighest(false);
-            User userToNotify = userRepo.findById(currentHighestBid.getId()).get();
+
+            User userToNotify = userRepo.findById(currentHighestBid.getUser().getId()).get();
+
             log.info("Отправляем уведомление на " + userToNotify.getEmail().strip() + ", что их ставка больше неактуальна");
             bidRepo.save(currentHighestBid);
 
@@ -104,7 +102,19 @@ public class BidService {
         return bidRepo.findByAd(ad.get());
     }
 
-    private Optional<Bid> findTheHighestBid(Ad ad){
+    public Optional<Bid> findTheHighestBid(Ad ad){
         return bidRepo.findBidsByAdAndHighest(ad);
+    }
+
+    public Bid findTheHighestBid(Long adId){
+        Optional<Ad> ad = adRepo.findById(adId);
+        if (ad.isEmpty()){
+            throw new AdNotFoundException(adId);
+        }
+        Optional<Bid> bid = bidRepo.findBidsByAdAndHighest(ad.get());
+        if (bid.isEmpty()){
+            throw new NoBidsException(adId);
+        }
+        return bid.get();
     }
 }

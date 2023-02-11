@@ -1,0 +1,329 @@
+openapi: 3.0.3
+info:
+  title: Алимбаев Талгат red_mad_robot
+  description: |-
+    Привет, тут я собрал описание API, которые используются в моем решении тестового задания
+  contact:
+    email: alimbayev.talat@gmail.com
+  version: 1.0.11
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: ads
+    description: поданные пользователями объявления
+  - name: bids
+    description: поданные пользователями ставки
+  - name: users
+    description: пользователи
+paths:
+  /api/ads/create:
+    post:
+      tags:
+        - ads
+      summary: создаем новое объявление
+      description: создание нового объявления доступно только для зарегистрированных пользователей
+      operationId: createAd
+      requestBody:
+        description: создание нового объявления
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ad'
+        required: true
+      responses:
+        '201':
+          description: объявление создано
+        '400':
+          description: При вводе некорректной информации выходит статус 400
+          
+  /api/ads/no-bids:
+    get:
+      tags:
+        - ads
+      summary: поиск всех новых объявлений, на которые пока нет ставок
+      description: поиск всех новых объявлений, на которые пока нет ставок
+      operationId: noBidAds
+      responses:
+        '200':
+          description: список новых объявлений
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ads'
+  /api/ads/active:
+    get:
+      tags:
+        - ads
+      summary: поиск всех активных объявлений
+      description: поиск всех активных объявлений
+      operationId: activeAds
+      responses:
+        '200':
+          description: список активных объявлений
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ads'
+                
+  /api/ads/archived:
+    get:
+      tags:
+        - ads
+      summary: поиск всех новых неактивных объявлений
+      description: поиск всех новых неактивных объявлений
+      operationId: archivedAds
+      responses:
+        '200':
+          description: список неактивных объявлений
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ads'
+                
+                
+  /api/bids/create:
+    post:
+      tags:
+        - bids
+      summary: создаем новую ставку
+      description: создание новой ставки доступно только для зарегистрированных пользователей
+      operationId: createBid
+      requestBody:
+        description: создание новой ставки
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bid'
+        required: true
+      responses:
+        '201':
+          description: ставка создана
+        '400':
+          description: При вводе некорректной информации выходит статус 400
+          
+  /api/bids/all:
+    get:
+      tags:
+        - bids
+      summary: поиск всех ставок
+      description: поиск всех ставок
+      operationId: allBids
+      responses:
+        '200':
+          description: список всех ставок
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bids'
+  /api/bids/by-ad:
+    get:
+      tags:
+        - bids
+      summary: поиск всех ставок по объявлению
+      description: поиск всех ставок по объявлению
+      operationId: bidsByAd
+      parameters: 
+        - name: adId
+          in: query
+          description: номер объявления, по которому осуществляется поиск всех ставок
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: список всех ставок по данному объявлению
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bids'
+        '404':
+          description: такое объявление не существует
+                
+  /api/bids/highest-bid/by-ad:
+    get:
+      tags:
+        - bids
+      summary: поиск наивысшей ставки по объявлению
+      description: поиск наивысшей ставки по объявлению
+      operationId: highestBidByAd
+      parameters: 
+        - name: adId
+          in: query
+          description: номер объявления, по которому осуществляется поиск наивысшей ставки
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: наивысшая ставка по данному объявлению
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidFull'
+        '404':
+          description: такое объявление не существует
+
+  
+
+  /api/users/new-user:
+    post:
+      tags:
+        - users
+      summary: создаем пользователя
+      description: Обязательные поля email и password
+      operationId: createUser
+      requestBody:
+        description: Тело запроса на создание нового пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        201:
+          description: пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: При вводе некорректной информации выходит статус 400
+
+  /api/users/find-by-email:
+    get:
+      tags:
+        - users
+      summary: ищем пользователя среди сохраненных пользователей по email
+      description: ''
+      operationId: findUserByEmail
+      parameters: 
+        - name: email
+          in: query
+          description: email, по которому осуществляется поиск пользователя
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: пользователь найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFindByEmail'
+        404:
+          description: пользователь с таким email не найден
+          
+            
+
+components:
+  schemas:
+    Bid:
+      type: object
+      properties:
+        ad:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+        bid:
+          type: number
+          example: 150.5
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+              
+    BidFull:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        ad:
+          $ref: '#/components/schemas/AdFull'
+        bid:
+          type: number
+          example: 1234
+        user:
+          $ref: '#/components/schemas/User'
+          
+    Bids:
+      type: array
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/BidFull'
+          - $ref: '#/components/schemas/BidFull'
+    Ad:
+      type: object
+      properties:
+        description:
+          type: string
+          example: мое первое объявление
+        startPrice:
+          type: number
+          example: 150.5
+        imageLink:
+          type: string
+          example: https://images.google.com/
+        adDurationMinutes:
+          type: integer
+          example: 1
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+              
+    AdFull:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        description:
+          type: string
+          example: мое первое объявление
+        startPrice:
+          type: number
+          example: 150.5
+        imageLink:
+          type: string
+          example: https://images.google.com/
+        adDurationMinutes:
+          type: integer
+          example: 1
+        user:
+          $ref: '#/components/schemas/User'
+          
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+
+    UserFindByEmail:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+          
+    Ads:
+      type: array
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/Ad'
+          - $ref: '#/components/schemas/Ad'
