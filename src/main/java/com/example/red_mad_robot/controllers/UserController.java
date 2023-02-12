@@ -28,8 +28,8 @@ public class UserController {
 
     @PostMapping(path = "api/users/new-user")
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveUser(@RequestBody @Valid User user){
+    public User saveUser(@RequestBody @Valid User user){
         log.info("сохраняем нового пользователя в БД: " + user.toString());
-        userService.saveUser(user);
+        return userService.saveUser(user);
     }
 }

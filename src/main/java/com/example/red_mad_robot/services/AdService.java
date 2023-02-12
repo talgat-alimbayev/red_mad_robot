@@ -27,10 +27,6 @@ public class AdService {
         return adRepo.save(ad);
     }
 
-    public Iterable<Ad> findAllAds() {
-        return adRepo.findAll();
-    }
-
     public Iterable<Ad> findActiveAds() {
         return adRepo.findByStatus("active");
     }

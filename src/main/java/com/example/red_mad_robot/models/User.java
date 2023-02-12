@@ -18,4 +18,8 @@ public class User {
     @NotBlank(message = "пароль не может быть пустым")
     private String password;
 
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }

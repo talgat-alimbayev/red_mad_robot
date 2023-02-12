@@ -184,7 +184,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserFull'
         400:
           description: При вводе некорректной информации выходит статус 400
 
@@ -208,7 +208,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFindByEmail'
+                $ref: '#/components/schemas/UserFull'
         404:
           description: пользователь с таким email не найден
           
@@ -308,7 +308,7 @@ components:
           type: string
           example: '12345'
 
-    UserFindByEmail:
+    UserFull:
       type: object
       properties:
         id:
